@@ -39,14 +39,18 @@ function reservarAssento(event) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dados)
         })
-        .then(response => response.text())
-        .then(() => {
-            mostrarMensagem('Reserva feita com sucesso!', true);
-            document.getElementById('mudar-assento-btn').style.display = 'block';
+        .then(response => response.json())
+        .then(data => {
+            if (data.result === 'success') {
+                mostrarMensagem('Reserva feita com sucesso!', true);
+                document.getElementById('mudar-assento-btn').style.display = 'block';
+            } else {
+                throw new Error(data.message || 'Erro desconhecido.');
+            }
         })
         .catch(error => {
             console.error('Erro ao enviar dados para o Google Sheets:', error);
-            mostrarMensagem('Erro ao enviar dados para o Google Sheets', false);
+            mostrarMensagem('Erro ao enviar dados para o Google Sheets: ' + error.message, false);
         });
 
         document.getElementById('reserva-form').reset();
@@ -74,13 +78,17 @@ function mudarAssento() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dados)
         })
-        .then(response => response.text())
-        .then(() => {
-            mostrarMensagem(`Assento ${assentoAnterior} foi liberado. Agora você pode selecionar um novo assento.`, true);
+        .then(response => response.json())
+        .then(data => {
+            if (data.result === 'success') {
+                mostrarMensagem(`Assento ${assentoAnterior} foi liberado. Agora você pode selecionar um novo assento.`, true);
+            } else {
+                throw new Error(data.message || 'Erro desconhecido.');
+            }
         })
         .catch(error => {
             console.error('Erro ao enviar a liberação para o Google Sheets:', error);
-            mostrarMensagem('Erro ao liberar o assento.', false);
+            mostrarMensagem('Erro ao liberar o assento: ' + error.message, false);
         });
 
         document.getElementById('mudar-assento-btn').style.display = 'none';
