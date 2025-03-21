@@ -73,6 +73,27 @@
         <p id="message"></p>  
     </div>  
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const assentoSelect = document.getElementById("assento");
+            assentoSelect.innerHTML = '<option value="" disabled selected>Selecione um Assento</option>';
+            
+            const pisoSuperior = document.createElement("optgroup");
+            pisoSuperior.label = "PISO SUPERIOR";
+            for (let i = 1; i <= 52; i++) {
+                pisoSuperior.appendChild(new Option(i.toString().padStart(2, '0'), i));
+            }
+            assentoSelect.appendChild(pisoSuperior);
+
+            const pisoInferior = document.createElement("optgroup");
+            pisoInferior.label = "PISO INFERIOR";
+            for (let i = 53; i <= 64; i++) {
+                pisoInferior.appendChild(new Option(i.toString(), i));
+            }
+            assentoSelect.appendChild(pisoInferior);
+        });
+    </script>
+    
     <script src="app.js"></script>  
 </body>  
 </html>
