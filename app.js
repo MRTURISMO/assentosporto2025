@@ -44,7 +44,7 @@ function reservarAssento(event) {
             assento: assentoSelecionado
         };
 
-        fetch('https://script.google.com/macros/s/AKfycbyZD-2tpaI8okb4wS8__zTJRRLECLRGsLNbfBOWS5gXOhbeq52zsFn1L_fgVdOf6jtP/exec', {
+        fetch('https://script.google.com/macros/s/AKfycbzYaD9ghAja3BsPUZCMPBqaUoqCDNRU050n3-gdzDx8MG5oDAL6HMAWYhs_pYmA5QD_/exec', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -93,7 +93,7 @@ function mudarAssento() {
             status: 'Disponível'
         };
 
-        fetch('https://script.google.com/macros/s/AKfycbyZD-2tpaI8okb4wS8__zTJRRLECLRGsLNbfBOWS5gXOhbeq52zsFn1L_fgVdOf6jtP/exec', {
+        fetch('https://script.google.com/macros/s/AKfycbzYaD9ghAja3BsPUZCMPBqaUoqCDNRU050n3-gdzDx8MG5oDAL6HMAWYhs_pYmA5QD_/exec', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -109,7 +109,7 @@ function mudarAssento() {
             mostrarMensagem('Erro ao liberar o assento.', false);
         });
 
-        // Exibe o botão de mudar o assento
+        // Esconde o botão de mudar o assento
         document.getElementById('mudar-assento-btn').style.display = 'none';
     } else {
         mostrarMensagem('Não há reserva registrada para esse CPF.', false);
