@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
     <title>Reserva de Assentos</title>  
     <style>  
+        :root {  
+            --primary-color: #28a745;  
+            --hover-color: #218838;  
+            --error-color: #dc3545;  
+            --success-color: #28a745;  
+        }  
         body {  
             font-family: Arial, sans-serif;  
             margin: 20px;  
@@ -27,13 +33,13 @@
             border-radius: 3px;  
         }  
         button {  
-            background-color: #28a745;  
+            background-color: var(--primary-color);  
             color: white;  
             cursor: pointer;  
             font-weight: bold;  
         }  
         button:hover {  
-            background-color: #218838;  
+            background-color: var(--hover-color);  
             opacity: 0.9;  
         }  
         #message-container {  
@@ -63,6 +69,12 @@
             max-width: 100%;  
             height: auto;  
         }  
+        @media (max-width: 600px) {  
+            body {  
+                margin: 10px;  
+                padding: 10px;  
+            }  
+        }  
     </style>  
 </head>  
 <body>  
@@ -70,8 +82,13 @@
     <img src="https://i.ibb.co/8L8k0NVC/MAPA-POLTRONAS-PORTO25.png" alt="Mapa do Ônibus" id="mapa_onibus">  
 
     <form id="reserva-form">  
+        <label for="nome">Seu Nome</label>  
         <input type="text" id="nome" placeholder="Seu Nome" required>  
+        
+        <label for="cpf">Seu CPF</label>  
         <input type="text" id="cpf" placeholder="Seu CPF" required>  
+        
+        <label for="escola">Escolha a Escola</label>  
         <select id="escola" required>  
             <option value="" disabled selected>Selecione a Escola</option>  
             <option value="CED 03 - GUARÁ">CED 03 - GUARÁ</option>  
@@ -80,9 +97,12 @@
             <option value="GG - GUARÁ">GG - GUARÁ</option>  
             <option value="CEM URSO BRANCO">CEM URSO BRANCO</option>  
         </select>  
+        
+        <label for="assento">Escolha um Assento</label>  
         <select id="assento" required>  
             <option value="" disabled selected>Selecione um Assento</option>  
         </select>  
+        
         <button type="submit" aria-label="Reservar assento">Reservar</button>  
     </form>  
 
@@ -123,6 +143,10 @@
             }  
         }  
 
+        document.getElementById('cpf').addEventListener('input', function () {  
+            this.value = this.value.replace(/\D/g, '').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');  
+        });  
+
         document.getElementById('reserva-form').addEventListener('submit', function(event) {  
             event.preventDefault();  
 
@@ -137,11 +161,13 @@
             }  
 
             const dados = {  
-                nome: nome,  
-                cpf: cpf,  
-                escola: escola,  
+                nome,  
+                cpf,  
+                escola,  
                 assento: assentoSelecionado  
             };  
+
+            document.querySelector('button[type="submit"]').disabled = true; // Desabilita o botão  
 
             fetch('https://script.google.com/macros/s/AKfycbyWnehIW_eALyt9QQat8qOoV_6TSKZuzhRtI1c2ypY/dev', {  
                 method: 'POST',  
@@ -150,7 +176,7 @@
                 },  
                 body: JSON.stringify(dados)  
             })  
-            .then(response => response.text())  
+            .then(response => response.json()) // Assumindo que o retorno é JSON  
             .then(data => {  
                 document.getElementById('message').textContent = 'Reserva feita com sucesso!';  
                 document.getElementById('message-container').style.display = 'block';  
@@ -159,7 +185,11 @@
             .catch(error => {  
                 console.error('Erro ao enviar dados para o Google Sheets:', error);  
                 document.getElementById('message').textContent = 'Erro ao enviar os dados. Tente novamente.';  
+                document.getElementById('message').style.color = '#dc3545'; // Cor para mensagem de erro  
                 document.getElementById('message-container').style.display = 'block';  
+            })  
+            .finally(() => {  
+                document.querySelector('button[type="submit"]').disabled = false; // Habilita o botão novamente  
             });  
 
             document.getElementById('reserva-form').reset();  
@@ -168,4 +198,4 @@
         atualizarAssentos();  
     </script>  
 </body>  
-</html>
+</html>  
