@@ -1,65 +1,3 @@
-// Simulação de um "banco de dados" de assentos  
-const assentos = {};
-
-// Inicializando os assentos de 01 a 64
-for (let i = 1; i <= 64; i++) {
-    assentos[i.toString().padStart(2, '0')] = true;  // Formata para dois dígitos
-}
-
-// Objeto para rastrear reservas por CPF
-const reservasPorCPF = {};
-
-// Função para atualizar o select de assentos baseado na disponibilidade
-function atualizarAssentos() {
-    const assentoSelect = document.getElementById('assento');
-    assentoSelect.innerHTML = '<option value="">Selecione um Assento</option>'; // Limpa as opções
-
-    const pisoSuperior = [];
-    const pisoInferior = [];
-
-    // Separa os assentos de acordo com o piso
-    for (let assento in assentos) {
-        if (assentos[assento]) { // Verifica se o assento está disponível
-            if (parseInt(assento) <= 52) {
-                pisoSuperior.push(assento);  // Piso Superior: 01 a 52
-            } else {
-                pisoInferior.push(assento);  // Piso Inferior: 53 a 64
-            }
-        }
-    }
-
-    // Ordena os assentos do Piso Superior em ordem crescente
-    pisoSuperior.sort((a, b) => parseInt(a) - parseInt(b));
-
-    // Adiciona assentos do piso superior
-    if (pisoSuperior.length > 0) {
-        assentoSelect.appendChild(new Option('--- PISO SUPERIOR ---', ''));
-        pisoSuperior.forEach(assento => {
-            const option = document.createElement('option');
-            option.value = assento;
-            option.textContent = assento;
-            assentoSelect.appendChild(option);
-        });
-    }
-
-    // Adiciona assentos do piso inferior
-    if (pisoInferior.length > 0) {
-        assentoSelect.appendChild(new Option('--- PISO INFERIOR ---', ''));
-        pisoInferior.forEach(assento => {
-            const option = document.createElement('option');
-            option.value = assento;
-            option.textContent = assento;
-            assentoSelect.appendChild(option);
-        });
-    }
-}
-
-// Função para validar o CPF
-function validarCPF(cpf) {
-    const regex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/; // Formato XXX.XXX.XXX-XX
-    return regex.test(cpf);
-}
-
 // Função para reservar um assento
 function reservarAssento(event) {
     event.preventDefault(); // Evita o envio do formulário
@@ -98,16 +36,20 @@ function reservarAssento(event) {
         const assentoCell = novaLinha.insertCell(2);
         assentoCell.textContent = assentoSelecionado;
 
-        // Envia os dados para o Google Sheets via fetch
-        const formData = new FormData();
-        formData.append('nome', nome);
-        formData.append('cpf', cpf);
-        formData.append('escola', escola);
-        formData.append('assento', assentoSelecionado);
+        // Dados para enviar ao Google Sheets
+        const dados = {
+            nome: nome,
+            cpf: cpf,
+            escola: escola,
+            assento: assentoSelecionado
+        };
 
-        fetch('https://script.google.com/macros/s/AKfycbzFHjgrq0KOeC_efyfcN8vK5vmvuydTQE3ztf38s-gPiPorOq5G0qvS4GZ8fFat5f6O/exec', {
+        fetch('https://script.google.com/macros/s/AKfycbyZD-2tpaI8okb4wS8__zTJRRLECLRGsLNbfBOWS5gXOhbeq52zsFn1L_fgVdOf6jtP/exec', {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dados)
         })
         .then(response => response.text())
         .then(data => {
@@ -145,14 +87,18 @@ function mudarAssento() {
         atualizarAssentos();
 
         // Envia a liberação de assento para o Google Sheets
-        const formData = new FormData();
-        formData.append('cpf', cpf);
-        formData.append('assento', assentoAnterior);
-        formData.append('status', 'Disponível');
+        const dados = {
+            cpf: cpf,
+            assento: assentoAnterior,
+            status: 'Disponível'
+        };
 
-        fetch('https://script.google.com/macros/s/AKfycbzFHjgrq0KOeC_efyfcN8vK5vmvuydTQE3ztf38s-gPiPorOq5G0qvS4GZ8fFat5f6O/exec', {
+        fetch('https://script.google.com/macros/s/AKfycbyZD-2tpaI8okb4wS8__zTJRRLECLRGsLNbfBOWS5gXOhbeq52zsFn1L_fgVdOf6jtP/exec', {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dados)
         })
         .then(response => response.text())
         .then(data => {
@@ -169,29 +115,3 @@ function mudarAssento() {
         mostrarMensagem('Não há reserva registrada para esse CPF.', false);
     }
 }
-
-// Função para carregar os dados dos assentos do Google Sheets
-function carregarAssentosGoogle() {
-    fetch('https://script.google.com/macros/s/AKfycbzFHjgrq0KOeC_efyfcN8vK5vmvuydTQE3ztf38s-gPiPorOq5G0qvS4GZ8fFat5f6O/exec')
-        .then(response => response.json())
-        .then(data => {
-            // Atualiza o estado dos assentos com os dados carregados do Google Sheets
-            data.forEach(reserva => {
-                assentos[reserva.assento] = reserva.status === 'Disponível';
-            });
-            atualizarAssentos(); // Atualiza a lista de assentos
-        })
-        .catch(error => console.error('Erro ao carregar dados do Google Sheets:', error));
-}
-
-// Inicializar a lista de assentos ao carregar a página
-window.onload = () => {
-    carregarAssentosGoogle();
-    atualizarAssentos();  // Atualiza a lista de assentos ao carregar
-};
-
-// Adicionando o evento de submissão do formulário
-document.getElementById('reserva-form').addEventListener('submit', reservarAssento);
-
-// Adicionando o evento para o botão de mudar assento
-document.getElementById('mudar-assento-btn').addEventListener('click', mudarAssento);
