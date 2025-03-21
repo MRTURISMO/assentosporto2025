@@ -69,6 +69,7 @@ function reservarAssento(event) {
             if (data.result === 'success') {
                 mostrarMensagem('Reserva feita com sucesso!', true);
                 atualizarAssentos();
+                document.getElementById('reserva-form').reset();
             } else {
                 throw new Error(data.message || 'Erro desconhecido.');
             }
@@ -77,9 +78,10 @@ function reservarAssento(event) {
             console.error('Erro ao enviar dados para o Google Sheets:', error);
             mostrarMensagem('Erro ao enviar os dados. Tente novamente.', false);
         });
-
-    document.getElementById('reserva-form').reset();
 }
+
+// Adicionando event listener ao formulário para garantir que a função seja chamada corretamente
+document.getElementById("reserva-form").addEventListener("submit", reservarAssento);
 
 // Carregar reservas ao iniciar
 carregarReservas();
