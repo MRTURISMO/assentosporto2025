@@ -5,12 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
     <title>Reserva de Assentos</title>  
     <style>  
-        :root {  
-            --primary-color: #28a745;  
-            --hover-color: #218838;  
-            --error-color: #dc3545;  
-            --success-color: #28a745;  
-        }  
         body {  
             font-family: Arial, sans-serif;  
             margin: 20px;  
@@ -18,10 +12,10 @@
             border: 1px solid #ccc;  
             border-radius: 5px;  
         }  
-        h1, h2 {  
+        h1 {  
             color: #333;  
         }  
-        form, #painel-controle {  
+        form {  
             margin-bottom: 20px;  
         }  
         input, select, button {  
@@ -33,47 +27,16 @@
             border-radius: 3px;  
         }  
         button {  
-            background-color: var(--primary-color);  
+            background-color: #28a745;  
             color: white;  
             cursor: pointer;  
             font-weight: bold;  
-        }  
-        button:hover {  
-            background-color: var(--hover-color);  
-            opacity: 0.9;  
         }  
         #message-container {  
             display: none;  
             margin-top: 10px;  
             padding: 10px;  
-            background-color: #d4edda;  
-            color: #155724;  
-            border: 1px solid #c3e6cb;  
             border-radius: 5px;  
-        }  
-        table {  
-            width: 100%;  
-            border-collapse: collapse;  
-        }  
-        th, td {  
-            border: 1px solid #ccc;  
-            padding: 8px;  
-            text-align: left;  
-        }  
-        th {  
-            background-color: #f7f7f7;  
-        }  
-        #mapa_onibus {  
-            margin: 20px 0;  
-            border: 1px solid #ccc;  
-            max-width: 100%;  
-            height: auto;  
-        }  
-        @media (max-width: 600px) {  
-            body {  
-                margin: 10px;  
-                padding: 10px;  
-            }  
         }  
     </style>  
 </head>  
@@ -103,99 +66,13 @@
             <option value="" disabled selected>Selecione um Assento</option>  
         </select>  
         
-        <button type="submit" aria-label="Reservar assento">Reservar</button>  
+        <button type="submit">Reservar</button>  
     </form>  
 
     <div id="message-container">  
         <p id="message"></p>  
     </div>  
 
-    <script>  
-        const assentos = {};  
-        for (let i = 1; i <= 64; i++) {  
-            assentos[i.toString().padStart(2, '0')] = true;  
-        }  
-
-        const reservasPorCPF = {};  
-
-        function atualizarAssentos() {  
-            const assentoSelect = document.getElementById('assento');  
-            assentoSelect.innerHTML = '<option value="" disabled selected>Selecione um Assento</option>';  
-
-            const pisoSuperior = [], pisoInferior = [];  
-            for (let assento in assentos) {  
-                if (assentos[assento]) {  
-                    (parseInt(assento) <= 52 ? pisoSuperior : pisoInferior).push(assento);  
-                }  
-            }  
-
-            if (pisoSuperior.length) {  
-                const optGroup = document.createElement('optgroup');  
-                optGroup.label = 'PISO SUPERIOR';  
-                pisoSuperior.forEach(a => optGroup.appendChild(new Option(a, a)));  
-                assentoSelect.appendChild(optGroup);  
-            }  
-            if (pisoInferior.length) {  
-                const optGroup = document.createElement('optgroup');  
-                optGroup.label = 'PISO INFERIOR';  
-                pisoInferior.forEach(a => optGroup.appendChild(new Option(a, a)));  
-                assentoSelect.appendChild(optGroup);  
-            }  
-        }  
-
-        document.getElementById('cpf').addEventListener('input', function () {  
-            this.value = this.value.replace(/\D/g, '').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');  
-        });  
-
-        document.getElementById('reserva-form').addEventListener('submit', function(event) {  
-            event.preventDefault();  
-
-            const nome = document.getElementById('nome').value;  
-            const cpf = document.getElementById('cpf').value;  
-            const escola = document.getElementById('escola').value;  
-            const assentoSelecionado = document.getElementById('assento').value;  
-
-            if (!assentoSelecionado) {  
-                alert('Selecione um assento válido.');  
-                return;  
-            }  
-
-            const dados = {  
-                nome,  
-                cpf,  
-                escola,  
-                assento: assentoSelecionado  
-            };  
-
-            document.querySelector('button[type="submit"]').disabled = true; // Desabilita o botão  
-
-            fetch('https://script.google.com/macros/s/AKfycbyWnehIW_eALyt9QQat8qOoV_6TSKZuzhRtI1c2ypY/dev', {  
-                method: 'POST',  
-                headers: {  
-                    'Content-Type': 'application/json'  
-                },  
-                body: JSON.stringify(dados)  
-            })  
-            .then(response => response.json()) // Assumindo que o retorno é JSON  
-            .then(data => {  
-                document.getElementById('message').textContent = 'Reserva feita com sucesso!';  
-                document.getElementById('message-container').style.display = 'block';  
-                atualizarAssentos();  
-            })  
-            .catch(error => {  
-                console.error('Erro ao enviar dados para o Google Sheets:', error);  
-                document.getElementById('message').textContent = 'Erro ao enviar os dados. Tente novamente.';  
-                document.getElementById('message').style.color = '#dc3545'; // Cor para mensagem de erro  
-                document.getElementById('message-container').style.display = 'block';  
-            })  
-            .finally(() => {  
-                document.querySelector('button[type="submit"]').disabled = false; // Habilita o botão novamente  
-            });  
-
-            document.getElementById('reserva-form').reset();  
-        });  
-
-        atualizarAssentos();  
-    </script>  
+    <script src="app.js"></script>  
 </body>  
-</html>  
+</html>

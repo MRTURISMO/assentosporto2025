@@ -1,5 +1,22 @@
+// Função para buscar reservas existentes no Google Sheets ao carregar a página
+function carregarReservas() {
+    fetch('https://script.google.com/macros/s/AKfycbzYaD9ghAja3BsPUZCMPBqaUoqCDNRU050n3-gdzDx8MG5oDAL6HMAWYhs_pYmA5QD_/exec')
+        .then(response => response.json())
+        .then(data => {
+            if (data.result === 'success') {
+                data.reservas.forEach(reserva => {
+                    assentos[reserva.assento] = false;
+                    reservasPorCPF[reserva.cpf] = reserva.assento;
+                });
+                atualizarAssentos();
+            }
+        })
+        .catch(error => console.error('Erro ao carregar reservas:', error));
+}
+
 // Função para enviar dados para o Google Sheets
 function enviarParaGoogleSheets(dados) {
+    console.log("Enviando para Google Sheets:", dados);
     return fetch('https://script.google.com/macros/s/AKfycbzYaD9ghAja3BsPUZCMPBqaUoqCDNRU050n3-gdzDx8MG5oDAL6HMAWYhs_pYmA5QD_/exec', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -17,10 +34,15 @@ function enviarParaGoogleSheets(dados) {
 function reservarAssento(event) {
     event.preventDefault();
 
-    const nome = document.getElementById('nome').value;
-    const cpf = document.getElementById('cpf').value;
+    const nome = document.getElementById('nome').value.trim();
+    const cpf = document.getElementById('cpf').value.trim();
     const escola = document.getElementById('escola').value;
     const assentoSelecionado = document.getElementById('assento').value;
+
+    if (!nome || !cpf || !escola || !assentoSelecionado) {
+        mostrarMensagem('Todos os campos são obrigatórios.', false);
+        return;
+    }
 
     if (!validarCPF(cpf)) {
         mostrarMensagem('CPF inválido. Por favor, insira um CPF válido.', false);
@@ -32,7 +54,7 @@ function reservarAssento(event) {
         return;
     }
 
-    if (!assentos[assentoSelecionado] || !assentoSelecionado) {
+    if (!assentos[assentoSelecionado]) {
         mostrarMensagem('Esse assento não existe ou já está reservado.', false);
         return;
     }
@@ -59,34 +81,5 @@ function reservarAssento(event) {
     document.getElementById('reserva-form').reset();
 }
 
-// Função para liberar assento
-function liberarAssento() {
-    const cpf = document.getElementById('cpf').value;
-
-    if (!reservasPorCPF[cpf]) {
-        mostrarMensagem('Nenhuma reserva encontrada para esse CPF.', false);
-        return;
-    }
-
-    const assentoAnterior = reservasPorCPF[cpf];
-    assentos[assentoAnterior] = true;
-    delete reservasPorCPF[cpf];
-
-    const dados = { cpf, assento: assentoAnterior, status: 'Disponível' };
-
-    enviarParaGoogleSheets(dados)
-        .then(data => {
-            if (data.result === 'success') {
-                mostrarMensagem(`Assento ${assentoAnterior} foi liberado. Agora você pode selecionar um novo assento.`, true);
-                atualizarAssentos();
-            } else {
-                throw new Error(data.message || 'Erro desconhecido.');
-            }
-        })
-        .catch(error => {
-            console.error('Erro ao liberar o assento:', error);
-            mostrarMensagem('Erro ao liberar o assento. Tente novamente.', false);
-        });
-
-    document.getElementById('mudar-assento-btn').style.display = 'none';
-}
+// Carregar reservas ao iniciar
+carregarReservas();
