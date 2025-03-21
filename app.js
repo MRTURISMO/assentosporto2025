@@ -22,39 +22,26 @@ function reservarAssento(event) {
     if (assentos[assentoSelecionado] && assentoSelecionado) {
         // Reserva o assento
         assentos[assentoSelecionado] = false;
-
-        // Armazena a reserva relacionada ao CPF
         reservasPorCPF[cpf] = assentoSelecionado;
 
         // Adiciona a reserva à tabela
         const tabelaReservas = document.getElementById('tabela-reservas').querySelector('tbody');
         const novaLinha = tabelaReservas.insertRow();
-        const nomeCell = novaLinha.insertCell(0);
-        nomeCell.textContent = nome;
-        const escolaCell = novaLinha.insertCell(1);
-        escolaCell.textContent = escola;
-        const assentoCell = novaLinha.insertCell(2);
-        assentoCell.textContent = assentoSelecionado;
+        novaLinha.insertCell(0).textContent = nome;
+        novaLinha.insertCell(1).textContent = escola;
+        novaLinha.insertCell(2).textContent = assentoSelecionado;
 
         // Dados para enviar ao Google Sheets
-        const dados = {
-            nome: nome,
-            cpf: cpf,
-            escola: escola,
-            assento: assentoSelecionado
-        };
+        const dados = { nome, cpf, escola, assento: assentoSelecionado };
 
-        fetch('https://script.google.com/macros/s/AKfycbzYaD9ghAja3BsPUZCMPBqaUoqCDNRU050n3-gdzDx8MG5oDAL6HMAWYhs_pYmA5QD_/exec', {
+        fetch('https://script.google.com/macros/s/AKfycbyWnehIW_eALyt9QQat8qOoV_6TSKZuzhRtI1c2ypY/dev', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dados)
         })
         .then(response => response.text())
-        .then(data => {
+        .then(() => {
             mostrarMensagem('Reserva feita com sucesso!', true);
-            // Exibe o botão para mudar o assento
             document.getElementById('mudar-assento-btn').style.display = 'block';
         })
         .catch(error => {
@@ -62,9 +49,8 @@ function reservarAssento(event) {
             mostrarMensagem('Erro ao enviar dados para o Google Sheets', false);
         });
 
-        // Limpa o formulário
         document.getElementById('reserva-form').reset();
-        atualizarAssentos(); // Atualiza a lista de assentos
+        atualizarAssentos();
     } else {
         mostrarMensagem('Esse assento já está reservado ou não existe.', false);
     }
@@ -74,34 +60,22 @@ function reservarAssento(event) {
 function mudarAssento() {
     const cpf = document.getElementById('cpf').value;
 
-    // Verifica se o CPF está registrado
     if (reservasPorCPF[cpf]) {
-        // Libera o assento anteriormente reservado
         const assentoAnterior = reservasPorCPF[cpf];
         assentos[assentoAnterior] = true;
-
-        // Remove a reserva do CPF
         delete reservasPorCPF[cpf];
 
-        // Atualiza a lista de assentos
         atualizarAssentos();
 
-        // Envia a liberação de assento para o Google Sheets
-        const dados = {
-            cpf: cpf,
-            assento: assentoAnterior,
-            status: 'Disponível'
-        };
+        const dados = { cpf, assento: assentoAnterior, status: 'Disponível' };
 
-        fetch('https://script.google.com/macros/s/AKfycbzYaD9ghAja3BsPUZCMPBqaUoqCDNRU050n3-gdzDx8MG5oDAL6HMAWYhs_pYmA5QD_/exec', {
+        fetch('https://script.google.com/macros/s/AKfycbyWnehIW_eALyt9QQat8qOoV_6TSKZuzhRtI1c2ypY/dev', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dados)
         })
         .then(response => response.text())
-        .then(data => {
+        .then(() => {
             mostrarMensagem(`Assento ${assentoAnterior} foi liberado. Agora você pode selecionar um novo assento.`, true);
         })
         .catch(error => {
@@ -109,7 +83,6 @@ function mudarAssento() {
             mostrarMensagem('Erro ao liberar o assento.', false);
         });
 
-        // Esconde o botão de mudar o assento
         document.getElementById('mudar-assento-btn').style.display = 'none';
     } else {
         mostrarMensagem('Não há reserva registrada para esse CPF.', false);

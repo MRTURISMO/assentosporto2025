@@ -1,175 +1,171 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reserva de Assentos</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        h1, h2 {
-            color: #333;
-        }
-        form, #painel-controle {
-            margin-bottom: 20px;
-        }
-        input, select, button {
-            display: block;
-            margin: 10px 0;
-            padding: 8px;
-            width: 100%;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-        }
-        button {
-            background-color: #28a745;
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        button:hover {
-            background-color: #218838;
-            opacity: 0.9;
-        }
-        #message-container {
-            display: none;
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            border-radius: 5px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f7f7f7;
-        }
-        #mapa_onibus {
-            margin: 20px 0;
-            border: 1px solid #ccc;
-            max-width: 100%;
-            height: auto;
-        }
-    </style>
-</head>
-<body>
-    <h1>Reservar Assento</h1>
-    <img src="https://i.ibb.co/8L8k0NVC/MAPA-POLTRONAS-PORTO25.png" alt="Mapa do Ônibus" id="mapa_onibus">
+<!DOCTYPE html>  
+<html lang="pt-BR">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Reserva de Assentos</title>  
+    <style>  
+        body {  
+            font-family: Arial, sans-serif;  
+            margin: 20px;  
+            padding: 20px;  
+            border: 1px solid #ccc;  
+            border-radius: 5px;  
+        }  
+        h1, h2 {  
+            color: #333;  
+        }  
+        form, #painel-controle {  
+            margin-bottom: 20px;  
+        }  
+        input, select, button {  
+            display: block;  
+            margin: 10px 0;  
+            padding: 8px;  
+            width: 100%;  
+            border: 1px solid #ccc;  
+            border-radius: 3px;  
+        }  
+        button {  
+            background-color: #28a745;  
+            color: white;  
+            cursor: pointer;  
+            font-weight: bold;  
+        }  
+        button:hover {  
+            background-color: #218838;  
+            opacity: 0.9;  
+        }  
+        #message-container {  
+            display: none;  
+            margin-top: 10px;  
+            padding: 10px;  
+            background-color: #d4edda;  
+            color: #155724;  
+            border: 1px solid #c3e6cb;  
+            border-radius: 5px;  
+        }  
+        table {  
+            width: 100%;  
+            border-collapse: collapse;  
+        }  
+        th, td {  
+            border: 1px solid #ccc;  
+            padding: 8px;  
+            text-align: left;  
+        }  
+        th {  
+            background-color: #f7f7f7;  
+        }  
+        #mapa_onibus {  
+            margin: 20px 0;  
+            border: 1px solid #ccc;  
+            max-width: 100%;  
+            height: auto;  
+        }  
+    </style>  
+</head>  
+<body>  
+    <h1>Reservar Assento</h1>  
+    <img src="https://i.ibb.co/8L8k0NVC/MAPA-POLTRONAS-PORTO25.png" alt="Mapa do Ônibus" id="mapa_onibus">  
 
-    <form id="reserva-form">
-        <input type="text" id="nome" placeholder="Seu Nome" required>
-        <input type="text" id="cpf" placeholder="Seu CPF" required>
-        <select id="escola" required>
-            <option value="" disabled selected>Selecione a Escola</option>
-            <option value="CED 03 - GUARÁ">CED 03 - GUARÁ</option>
-            <option value="CEMI - GAMA">CEMI - GAMA</option>
-            <option value="CEMEIT">CEMEIT</option>
-            <option value="GG - GUARÁ">GG - GUARÁ</option>
-            <option value="CEM URSO BRANCO">CEM URSO BRANCO</option>
-        </select>
-        <select id="assento" required>
-            <option value="" disabled selected>Selecione um Assento</option>
-        </select>
-        <button type="submit" aria-label="Reservar assento">Reservar</button>
-    </form>
+    <form id="reserva-form">  
+        <input type="text" id="nome" placeholder="Seu Nome" required>  
+        <input type="text" id="cpf" placeholder="Seu CPF" required>  
+        <select id="escola" required>  
+            <option value="" disabled selected>Selecione a Escola</option>  
+            <option value="CED 03 - GUARÁ">CED 03 - GUARÁ</option>  
+            <option value="CEMI - GAMA">CEMI - GAMA</option>  
+            <option value="CEMEIT">CEMEIT</option>  
+            <option value="GG - GUARÁ">GG - GUARÁ</option>  
+            <option value="CEM URSO BRANCO">CEM URSO BRANCO</option>  
+        </select>  
+        <select id="assento" required>  
+            <option value="" disabled selected>Selecione um Assento</option>  
+        </select>  
+        <button type="submit" aria-label="Reservar assento">Reservar</button>  
+    </form>  
 
-    <div id="message-container">
-        <p id="message"></p>
-    </div>
+    <div id="message-container">  
+        <p id="message"></p>  
+    </div>  
 
-    <script>
-        const assentos = {};
-        for (let i = 1; i <= 64; i++) {
-            assentos[i.toString().padStart(2, '0')] = true;
-        }
+    <script>  
+        const assentos = {};  
+        for (let i = 1; i <= 64; i++) {  
+            assentos[i.toString().padStart(2, '0')] = true;  
+        }  
 
-        const reservasPorCPF = {};
+        const reservasPorCPF = {};  
 
-        function atualizarAssentos() {
-            const assentoSelect = document.getElementById('assento');
-            assentoSelect.innerHTML = '<option value="" disabled selected>Selecione um Assento</option>';
+        function atualizarAssentos() {  
+            const assentoSelect = document.getElementById('assento');  
+            assentoSelect.innerHTML = '<option value="" disabled selected>Selecione um Assento</option>';  
 
-            const pisoSuperior = [], pisoInferior = [];
-            for (let assento in assentos) {
-                if (assentos[assento]) {
-                    (parseInt(assento) <= 52 ? pisoSuperior : pisoInferior).push(assento);
-                }
-            }
+            const pisoSuperior = [], pisoInferior = [];  
+            for (let assento in assentos) {  
+                if (assentos[assento]) {  
+                    (parseInt(assento) <= 52 ? pisoSuperior : pisoInferior).push(assento);  
+                }  
+            }  
 
-            if (pisoSuperior.length) {
-                const optGroup = document.createElement('optgroup');
-                optGroup.label = 'PISO SUPERIOR';
-                pisoSuperior.forEach(a => optGroup.appendChild(new Option(a, a)));
-                assentoSelect.appendChild(optGroup);
-            }
-            if (pisoInferior.length) {
-                const optGroup = document.createElement('optgroup');
-                optGroup.label = 'PISO INFERIOR';
-                pisoInferior.forEach(a => optGroup.appendChild(new Option(a, a)));
-                assentoSelect.appendChild(optGroup);
-            }
-        }
+            if (pisoSuperior.length) {  
+                const optGroup = document.createElement('optgroup');  
+                optGroup.label = 'PISO SUPERIOR';  
+                pisoSuperior.forEach(a => optGroup.appendChild(new Option(a, a)));  
+                assentoSelect.appendChild(optGroup);  
+            }  
+            if (pisoInferior.length) {  
+                const optGroup = document.createElement('optgroup');  
+                optGroup.label = 'PISO INFERIOR';  
+                pisoInferior.forEach(a => optGroup.appendChild(new Option(a, a)));  
+                assentoSelect.appendChild(optGroup);  
+            }  
+        }  
 
-        function reservarAssento(event) {
-            event.preventDefault();
+        document.getElementById('reserva-form').addEventListener('submit', function(event) {  
+            event.preventDefault();  
 
-            const nome = document.getElementById('nome').value;
-            const cpf = document.getElementById('cpf').value.replace(/\D/g, '');
-            const escola = document.getElementById('escola').value;
-            const assentoSelecionado = document.getElementById('assento').value;
+            const nome = document.getElementById('nome').value;  
+            const cpf = document.getElementById('cpf').value;  
+            const escola = document.getElementById('escola').value;  
+            const assentoSelecionado = document.getElementById('assento').value;  
 
-            if (cpf.length !== 11) {
-                mostrarMensagem('CPF inválido. Deve conter 11 números.', false);
-                return;
-            }
+            if (!assentoSelecionado) {  
+                alert('Selecione um assento válido.');  
+                return;  
+            }  
 
-            if (reservasPorCPF[cpf]) {
-                mostrarMensagem(`Esse CPF já reservou o assento ${reservasPorCPF[cpf]}.`, false);
-                return;
-            }
+            const dados = {  
+                nome: nome,  
+                cpf: cpf,  
+                escola: escola,  
+                assento: assentoSelecionado  
+            };  
 
-            if (!assentos[assentoSelecionado]) {
-                mostrarMensagem('Esse assento já está reservado.', false);
-                return;
-            }
+            fetch('https://script.google.com/macros/s/AKfycbyWnehIW_eALyt9QQat8qOoV_6TSKZuzhRtI1c2ypY/dev', {  
+                method: 'POST',  
+                headers: {  
+                    'Content-Type': 'application/json'  
+                },  
+                body: JSON.stringify(dados)  
+            })  
+            .then(response => response.text())  
+            .then(data => {  
+                document.getElementById('message').textContent = 'Reserva feita com sucesso!';  
+                document.getElementById('message-container').style.display = 'block';  
+                atualizarAssentos();  
+            })  
+            .catch(error => {  
+                console.error('Erro ao enviar dados para o Google Sheets:', error);  
+                document.getElementById('message').textContent = 'Erro ao enviar os dados. Tente novamente.';  
+                document.getElementById('message-container').style.display = 'block';  
+            });  
 
-            assentos[assentoSelecionado] = false;
-            reservasPorCPF[cpf] = assentoSelecionado;
-            mostrarMensagem('Reserva realizada com sucesso!', true);
-            atualizarAssentos();
+            document.getElementById('reserva-form').reset();  
+        });  
 
-            fetch('https://script.google.com/macros/s/AKfycbzYaD9ghAja3BsPUZCMPBqaUoqCDNRU050n3-gdzDx8MG5oDAL6HMAWYhs_pYmA5QD_/exec', {
-                method: 'POST',
-                body: new URLSearchParams({ nome, cpf, escola, assento: assentoSelecionado }),
-            })
-            .then(response => response.text())
-            .then(() => mostrarMensagem('Reserva registrada com sucesso no sistema!', true))
-            .catch(() => mostrarMensagem('Erro ao registrar a reserva no sistema.', false));
-        }
-
-        function mostrarMensagem(texto, sucesso) {
-            const messageContainer = document.getElementById('message-container');
-            const messageElement = document.getElementById('message');
-            messageElement.textContent = texto;
-            messageElement.style.color = sucesso ? '#155724' : '#721c24';
-            messageContainer.style.display = 'block';
-        }
-
-        window.onload = atualizarAssentos;
-        document.getElementById('reserva-form').addEventListener('submit', reservarAssento);
-    </script>
-</body>
+        atualizarAssentos();  
+    </script>  
+</body>  
 </html>
