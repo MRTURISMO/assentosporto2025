@@ -1,9 +1,11 @@
 // Função para buscar reservas existentes no Google Sheets ao carregar a página
 function carregarReservas() {
+    console.log("Carregando reservas...");
     fetch('https://script.google.com/macros/s/AKfycbzYaD9ghAja3BsPUZCMPBqaUoqCDNRU050n3-gdzDx8MG5oDAL6HMAWYhs_pYmA5QD_/exec')
         .then(response => response.json())
         .then(data => {
             if (data.result === 'success') {
+                console.log("Reservas carregadas:", data.reservas);
                 data.reservas.forEach(reserva => {
                     assentos[reserva.assento] = false;
                     reservasPorCPF[reserva.cpf] = reserva.assento;
@@ -23,6 +25,7 @@ function enviarParaGoogleSheets(dados) {
         body: JSON.stringify(dados)
     })
     .then(response => {
+        console.log("Resposta recebida:", response);
         if (!response.ok) {
             throw new Error('Erro ao conectar ao servidor');
         }
@@ -33,11 +36,14 @@ function enviarParaGoogleSheets(dados) {
 // Função para reservar um assento
 function reservarAssento(event) {
     event.preventDefault();
+    console.log("Iniciando reserva...");
 
     const nome = document.getElementById('nome').value.trim();
     const cpf = document.getElementById('cpf').value.trim();
     const escola = document.getElementById('escola').value;
     const assentoSelecionado = document.getElementById('assento').value;
+
+    console.log("Dados inseridos:", { nome, cpf, escola, assentoSelecionado });
 
     if (!nome || !cpf || !escola || !assentoSelecionado) {
         mostrarMensagem('Todos os campos são obrigatórios.', false);
@@ -59,6 +65,7 @@ function reservarAssento(event) {
         return;
     }
 
+    console.log("Reserva válida, prosseguindo com envio...");
     assentos[assentoSelecionado] = false;
     reservasPorCPF[cpf] = assentoSelecionado;
 
@@ -66,6 +73,7 @@ function reservarAssento(event) {
 
     enviarParaGoogleSheets(dados)
         .then(data => {
+            console.log("Resposta do servidor:", data);
             if (data.result === 'success') {
                 mostrarMensagem('Reserva feita com sucesso!', true);
                 atualizarAssentos();
